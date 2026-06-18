@@ -26,23 +26,41 @@ specifics. Claude auto-loads the relevant skill from each `description`.
 
 ## Install
 
-Claude Code discovers personal skills in `~/.claude/skills/`. Point it at this repo so the
-skills stay version-controlled here.
+One line. Finds every agent. Installs for each.
 
-**Option A — symlink each skill (recommended; edits here apply immediately):**
+```bash
+# macOS / Linux / WSL / Git Bash
+curl -fsSL https://raw.githubusercontent.com/ProgrammerDATCH/ProjectMyCodingStyleSkills/develop/install.sh | bash
+```
+
+```powershell
+# Windows (PowerShell 5.1+)
+irm https://raw.githubusercontent.com/ProgrammerDATCH/ProjectMyCodingStyleSkills/develop/install.ps1 | iex
+```
+
+The installer fetches (or updates) the skills source, detects every agent that uses the
+`SKILL.md` format — currently Claude Code (`~/.claude/skills`, honoring
+`CLAUDE_CONFIG_DIR`) — and **symlinks** each skill into it (copying where symlinks aren't
+allowed). It's re-runnable and idempotent; run it again to update.
+
+**Env overrides**
+
+| Var | Default | Purpose |
+| --- | --- | --- |
+| `SKILLS_BRANCH` | `develop` | Branch to pull |
+| `SKILLS_SRC_DIR` | `~/.local/share/coding-style-skills` (`%LOCALAPPDATA%\coding-style-skills` on Windows) | Where the source lives |
+| `SKILLS_TARGETS` | _(auto-detect)_ | `:`-separated (`;` on Windows) skills dirs to install into |
+
+> The one-liners point at `develop` because that's this repo's branch. If you later make
+> `main` the default branch, switch the URLs to `/main/`.
+
+### Manual install (no script)
 
 ```bash
 mkdir -p ~/.claude/skills
 for s in coding-principles nextjs-dashboard express-prisma-api react-vite-app python-app; do
   ln -sfn "$(pwd)/skills/$s" ~/.claude/skills/$s
 done
-```
-
-**Option B — clone the whole repo as the skills dir:**
-
-```bash
-git clone https://github.com/ProgrammerDATCH/ProjectMyCodingStyleSkills.git ~/.claude/skills-src
-ln -sfn ~/.claude/skills-src/skills/* ~/.claude/skills/   # or symlink individually
 ```
 
 Verify with `/skills` (or list them) inside Claude Code; each should appear by name.
@@ -56,6 +74,8 @@ specific about triggers. After editing, changes apply on the next session (no re
 ## Layout
 
 ```
+install.sh             one-line installer (macOS / Linux / WSL / Git Bash)
+install.ps1            one-line installer (Windows PowerShell)
 skills/
   coding-principles/SKILL.md
   nextjs-dashboard/SKILL.md
