@@ -29,7 +29,14 @@ die()  { printf '\033[1;31merror:\033[0m %s\n' "$*" >&2; exit 1; }
 # 1. Locate the skills source: use the surrounding checkout if present,
 #    otherwise clone (or download a tarball when git is unavailable).
 resolve_source() {
-  self_dir="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || true)"
+  # Only treat as a local checkout when the script is a real file on disk
+  # (i.e. `bash install.sh`). When piped via `curl | bash`, BASH_SOURCE is
+  # "bash", not a file, so we always fetch — never mistake the current dir.
+  script="${BASH_SOURCE[0]:-}"
+  self_dir=""
+  if [ -n "$script" ] && [ -f "$script" ]; then
+    self_dir="$(cd "$(dirname "$script")" 2>/dev/null && pwd || true)"
+  fi
   if [ -n "$self_dir" ] && [ -d "$self_dir/skills" ]; then
     SRC_DIR="$self_dir"
     info "Using local checkout at $SRC_DIR"
