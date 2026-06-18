@@ -1,8 +1,8 @@
 #!/usr/bin/env pwsh
 #
-# Install David's coding-style skills into every detected AI agent (Windows).
+# Install Akokuntaro Coding Skills (David's coding-style conventions) into every detected AI agent (Windows).
 #
-#   irm https://raw.githubusercontent.com/ProgrammerDATCH/ProjectMyCodingStyleSkills/develop/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/ProgrammerDATCH/Akokuntaro-Coding-Skills/develop/install.ps1 | iex
 #
 # Fetches (or updates) the skills source, finds every agent that uses the
 # SKILL.md format, and links each skill into it (copying if symlinks aren't
@@ -16,7 +16,7 @@
 
 $ErrorActionPreference = 'Stop'
 
-$RepoSlug = 'ProgrammerDATCH/ProjectMyCodingStyleSkills'
+$RepoSlug = 'ProgrammerDATCH/Akokuntaro-Coding-Skills'
 $Branch   = if ($env:SKILLS_BRANCH)  { $env:SKILLS_BRANCH }  else { 'develop' }
 $SrcDir   = if ($env:SKILLS_SRC_DIR) { $env:SKILLS_SRC_DIR } else { Join-Path $env:LOCALAPPDATA 'coding-style-skills' }
 $Skills   = @('coding-principles','nextjs-dashboard','express-prisma-api','react-vite-app','python-app')

@@ -1,7 +1,8 @@
 ---
 name: coding-principles
 description: >-
-  David's universal coding standards — clean, reusable, strongly-typed code.
+  Akokuntaro Coding Skills — David's universal coding standards: clean, reusable,
+  strongly-typed code.
   Apply on ANY coding task in his repos (TypeScript, JavaScript, React,
   Node/Express, Python): how to name things, when to extract/abstract for reuse,
   how strict TypeScript should be, commenting density, error handling, and the
@@ -10,7 +11,7 @@ description: >-
   react-vite-app, python-app) when one applies.
 ---
 
-# Coding principles (David's defaults)
+# Coding principles — Akokuntaro Coding Skills (David's defaults)
 
 These are the cross-cutting rules. Follow them on every task. When a stack-specific
 skill is also loaded, the stack skill wins on stack details; this skill wins on

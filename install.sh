@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# Install David's coding-style skills into every detected AI agent.
+# Install Akokuntaro Coding Skills (David's coding-style conventions) into every detected AI agent.
 #
-#   curl -fsSL https://raw.githubusercontent.com/ProgrammerDATCH/ProjectMyCodingStyleSkills/develop/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/ProgrammerDATCH/Akokuntaro-Coding-Skills/develop/install.sh | bash
 #
 # It fetches (or updates) the skills source, finds every agent that uses the
 # SKILL.md format, and symlinks each skill into it (copying if symlinks aren't
@@ -16,7 +16,7 @@
 
 set -euo pipefail
 
-REPO_SLUG="ProgrammerDATCH/ProjectMyCodingStyleSkills"
+REPO_SLUG="ProgrammerDATCH/Akokuntaro-Coding-Skills"
 BRANCH="${SKILLS_BRANCH:-develop}"
 SRC_DIR="${SKILLS_SRC_DIR:-$HOME/.local/share/coding-style-skills}"
 SKILLS="coding-principles nextjs-dashboard express-prisma-api react-vite-app python-app"

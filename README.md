@@ -1,7 +1,7 @@
-# My Coding Style Skills
+# Akokuntaro Coding Skills
 
-Personal [Claude Code Skills](https://docs.claude.com/en/docs/claude-code/skills) that
-teach Claude David's coding conventions — preferred stacks, patterns, naming, and the
+**Akokuntaro Coding Skills** — personal [Claude Code Skills](https://docs.claude.com/en/docs/claude-code/skills)
+that teach Claude David's coding conventions — preferred stacks, patterns, naming, and the
 do/don't rules — so every session follows the same style.
 
 ## Skills
@@ -30,12 +30,12 @@ One line. Finds every agent. Installs for each.
 
 ```bash
 # macOS / Linux / WSL / Git Bash
-curl -fsSL https://raw.githubusercontent.com/ProgrammerDATCH/ProjectMyCodingStyleSkills/develop/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/ProgrammerDATCH/Akokuntaro-Coding-Skills/develop/install.sh | bash
 ```
 
 ```powershell
 # Windows (PowerShell 5.1+)
-irm https://raw.githubusercontent.com/ProgrammerDATCH/ProjectMyCodingStyleSkills/develop/install.ps1 | iex
+irm https://raw.githubusercontent.com/ProgrammerDATCH/Akokuntaro-Coding-Skills/develop/install.ps1 | iex
 ```
 
 The installer fetches (or updates) the skills source, detects every agent that uses the
