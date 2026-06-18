@@ -113,6 +113,50 @@ export async function GET() {
 - Mark interactive components `'use client'`; keep server components for data/layout where
   possible. Standard pieces: `GlobalFilter`, skeletons, `ErrorDisplay`, `QueryProvider`.
 
+### Inputs & controls — prefer a (searchable) select
+
+- When the value comes from a **known set of options**, use a **select** — even when there
+  are only a few. Reach for a free **text input only when capturing arbitrary/free-form
+  data** the user makes up (names, notes, amounts, search queries).
+- **Every select must be searchable.** Use the shadcn **Combobox** (Popover + `Command`
+  from `cmdk`) with a filter input, not a bare `<Select>` dropdown. Add `cmdk` if the
+  project doesn't have it yet. Show empty/loading states inside the popover.
+
+```tsx
+// Searchable select = shadcn Combobox (Popover + Command/cmdk). Sketch:
+<Popover open={open} onOpenChange={setOpen}>
+  <PopoverTrigger asChild>
+    <Button variant="outline" role="combobox" className="w-full justify-between text-base">
+      {value ? options.find((o) => o.value === value)?.label : "Select…"}
+      <ChevronsUpDown className="opacity-50" />
+    </Button>
+  </PopoverTrigger>
+  <PopoverContent className="p-0">
+    <Command>
+      <CommandInput placeholder="Search…" />
+      <CommandList>
+        <CommandEmpty>No match.</CommandEmpty>
+        {options.map((o) => (
+          <CommandItem key={o.value} value={o.label} onSelect={() => { onChange(o.value); setOpen(false); }}>
+            {o.label}
+          </CommandItem>
+        ))}
+      </CommandList>
+    </Command>
+  </PopoverContent>
+</Popover>
+```
+
+### Responsive & typography — mobile-first, large fonts
+
+- **Mobile-first always.** Write base (unprefixed) Tailwind classes for the small-screen
+  layout, then layer up with `sm: md: lg: xl:`. Single-column by default; expand to grids
+  at wider breakpoints. Never start desktop-only and bolt on mobile.
+- **Prefer large, readable type**, and scale it **up** on big screens — don't leave body
+  text tiny on wide monitors. e.g. `text-base md:text-lg`, headings `text-2xl lg:text-4xl`.
+  Generous spacing and tap targets (min ~44px). Tables/charts get horizontal scroll or
+  reflow on mobile rather than shrinking text.
+
 ## Auth
 
 next-auth (`next-auth` v4): config under `app/api/auth/[...nextauth]`, `SessionProvider`
@@ -128,8 +172,11 @@ in `providers.tsx`, gate pages/handlers by session, redirect unauthorised users 
 
 **Do** call external APIs from route handlers · extract integration helpers to `lib/` ·
 type hook responses and export the types · reuse `shared` components, skeletons, and
-`ErrorDisplay` · keep IDs/keys in constants/env.
+`ErrorDisplay` · keep IDs/keys in constants/env · use a searchable select (Combobox) for
+known option sets · design mobile-first · keep type large and scale it up on big screens.
 
 **Don't** fetch third-party APIs (with keys) from the client · copy a component into a
 second page instead of moving it to `shared` · hard-code Airtable/Xero IDs or hex colours
-inline · hand-roll loading/error UI per page · drop `any` on payloads without shaping them.
+inline · hand-roll loading/error UI per page · drop `any` on payloads without shaping them ·
+use a text input where a select fits · ship a non-searchable dropdown · start desktop-first
+or leave body text tiny on large screens.

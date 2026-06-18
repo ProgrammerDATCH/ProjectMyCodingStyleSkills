@@ -121,6 +121,49 @@ Same as the Next stack: build from `components/ui` shadcn primitives, Tailwind v
 utilities + `cn()`, lucide-react icons, recharts, framer-motion for motion. Centralise
 theme tokens; no inline style theming or hex literals in components.
 
+### Inputs & controls — prefer a (searchable) select
+
+- When the value comes from a **known set of options**, use a **select** — even for just a
+  few. Reach for a free **text input only when capturing arbitrary/free-form data** (names,
+  notes, amounts, search queries).
+- **Every select must be searchable.** Use the shadcn **Combobox** (Popover + `Command`
+  from `cmdk` — already a dependency) with a filter input, not a bare `<Select>`. Wire it
+  to react-hook-form via a `Controller`; show empty/loading states in the popover.
+
+```tsx
+// Searchable select = Popover + Command (cmdk), bound through RHF Controller. Sketch:
+<Controller name="country" control={control} render={({ field }) => (
+  <Popover open={open} onOpenChange={setOpen}>
+    <PopoverTrigger asChild>
+      <Button variant="outline" role="combobox" className="w-full justify-between text-base">
+        {field.value ? labelFor(field.value) : "Select…"}<ChevronsUpDown className="opacity-50" />
+      </Button>
+    </PopoverTrigger>
+    <PopoverContent className="p-0">
+      <Command>
+        <CommandInput placeholder="Search…" />
+        <CommandList>
+          <CommandEmpty>No match.</CommandEmpty>
+          {options.map((o) => (
+            <CommandItem key={o.value} value={o.label}
+              onSelect={() => { field.onChange(o.value); setOpen(false); }}>{o.label}</CommandItem>
+          ))}
+        </CommandList>
+      </Command>
+    </PopoverContent>
+  </Popover>
+)} />
+```
+
+### Responsive & typography — mobile-first, large fonts
+
+- **Mobile-first always.** Base (unprefixed) Tailwind classes describe the small-screen
+  layout; layer up with `sm: md: lg: xl:`. Single-column by default, grids at wider
+  breakpoints. Never start desktop-only and patch mobile afterward.
+- **Prefer large, readable type** and scale it **up** on big screens (`text-base md:text-lg`,
+  headings `text-2xl lg:text-4xl`) — don't leave body text tiny on wide monitors. Generous
+  spacing and tap targets (min ~44px); tables/charts scroll or reflow on mobile.
+
 ## Scripts & deploy
 
 `dev: vite`, `build: vite build`, `build:dev`, `lint`, `preview`. Apps are Dockerised and
@@ -131,8 +174,11 @@ comes from env / `api-base-url.ts` — never hard-code it.
 
 **Do** route every request through `globalFetch` + `assertApiOk` · wrap endpoints in typed
 services · organise new domains as feature folders · validate forms with zod · toast with
-sonner · invalidate queries after mutations.
+sonner · invalidate queries after mutations · use a searchable select (Combobox) for known
+option sets · design mobile-first · keep type large and scale it up on big screens.
 
 **Don't** call `fetch`/`axios` directly from a component · throw away the envelope (use
 `assertApiOk` so mutations reject) · hard-code the API base URL · duplicate a service across
-features · scatter loose `useState` where TanStack Query/Context belongs.
+features · scatter loose `useState` where TanStack Query/Context belongs · use a text input
+where a select fits · ship a non-searchable dropdown · start desktop-first or leave body
+text tiny on large screens.

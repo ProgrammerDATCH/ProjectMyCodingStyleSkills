@@ -4,10 +4,12 @@ description: >-
   David's standard for building standalone backend REST APIs with Express +
   TypeScript + Prisma (MySQL). Use whenever creating or editing an Express/Node
   API server, adding an endpoint, controller, service, route, Joi validation,
-  middleware, or Prisma model in his repos (e.g. Ireme backends). Covers the
-  layered architecture (routes → middleware → controllers → services), the
-  ApiError/ERROR_CODES error model, the sendResponse envelope, catchAsync, JWT
-  auth, winston logging, path aliases, and the Docker→ghcr.io→ssh deploy flow.
+  middleware, or Prisma model, OR running/troubleshooting Prisma migrations
+  (migrate dev, drift, migrate deploy, migrate resolve) in his repos (e.g. Ireme
+  backends). Covers the layered architecture (routes → middleware → controllers →
+  services), the ApiError/ERROR_CODES error model, the sendResponse envelope,
+  catchAsync, JWT auth, winston logging, path aliases, the migrations workflow
+  (always migrate dev, never db push), and the Docker→ghcr.io→ssh deploy flow.
   This is the default backend for new APIs. Pair with coding-principles.
 ---
 
@@ -170,11 +172,45 @@ attaches `req.user`. Access/refresh tokens + a sessions table for revocation. Th
   secrets. Prisma client is a singleton in `config/prisma.ts`.
 - **Swagger**: keep `swagger.json` / annotations current when adding endpoints.
 
+## Database migrations — migrate, never push
+
+Schema changes go through **migrations**. Every model change produces a migration file
+that is committed and replayed everywhere. Never mutate the DB shape outside a migration.
+
+- **Development:** always `npx prisma migrate dev` (it creates the migration, applies it,
+  and regenerates the client). Name it: `npx prisma migrate dev --name <change>`.
+- **Drift:** if `migrate dev` reports schema drift (the DB no longer matches the migration
+  history), **fix it** — don't ignore it and don't paper over it with `db push`.
+  Inspect with `npx prisma migrate status`, reconcile by writing/repairing a migration so
+  history matches the schema, then re-run `migrate dev`. Only on a throwaway/local DB is a
+  reset (`npx prisma migrate reset`) acceptable to rebuild from history.
+- **NEVER `npx prisma db push`** (or the `db:push` script). It bypasses migration history,
+  causes the drift above, and isn't reproducible in prod. Treat it as forbidden.
+
+### Production / CI: `migrate deploy` and resolving a stuck state
+
+Deploy applies committed migrations with `npx prisma migrate deploy` (no prompts, never
+generates new migrations). When it refuses because a migration is in a failed or
+partially-applied state, resolve it explicitly with `prisma migrate resolve` rather than
+editing `_prisma_migrations` by hand:
+
+- A migration's changes are **already present** in the DB (applied manually or by a prior
+  partial run) → mark it applied so deploy skips it:
+  `npx prisma migrate resolve --applied <migration_name>`
+- A migration **failed / errored** and its changes were not (or should not be) kept → mark
+  it rolled back, fix the migration SQL, then re-deploy:
+  `npx prisma migrate resolve --rolled-back <migration_name>`
+- Then re-run `npx prisma migrate deploy` and confirm with `npx prisma migrate status`.
+
+Always diagnose with `migrate status` first; choose `--applied` vs `--rolled-back` by
+whether the migration's effects actually exist in the database. Never resolve blindly.
+
 ## Scripts & deploy
 
 Mirror the existing `package.json`: `dev` (nodemon+ts-node), `build`
-(`prisma generate && tsc && tsc-alias`), and `db:*` (`migrate`, `push`, `seed`, `studio`,
-`reset`). Seed/maintenance scripts go in `scripts/` and run via
+(`prisma generate && tsc && tsc-alias`), and `db:*` (`migrate` → `migrate dev`, `seed`,
+`studio`). Deploy runs `prisma migrate deploy` before the app starts (entrypoint or CI),
+not `db push`. Seed/maintenance scripts go in `scripts/` and run via
 `ts-node -r tsconfig-paths/register`. Deploy = build → `docker build` → push to
 `ghcr.io/programmerdatch/...` → ssh to the server → `docker compose pull && up -d`.
 
@@ -182,8 +218,10 @@ Mirror the existing `package.json`: `dev` (nodemon+ts-node), `build`
 
 **Do** keep controllers thin · put all logic in services · throw `ApiError` with a code ·
 return `{ message, data }` from services · reuse `commonSchemas`/`optionalOrEmpty` ·
-type request inputs.
+type request inputs · evolve the schema with `migrate dev` · fix drift via a migration ·
+unstick prod with `migrate resolve --applied|--rolled-back`.
 
 **Don't** access Prisma from a controller · touch `req`/`res` in a service · return raw
 Prisma rows (transform first) · invent a new response shape · `console.log` · hard-code
-secrets, status strings, or error messages that should be `ERROR_CODES`.
+secrets, status strings, or error messages that should be `ERROR_CODES` · run
+`prisma db push` · ignore drift · hand-edit `_prisma_migrations`.
