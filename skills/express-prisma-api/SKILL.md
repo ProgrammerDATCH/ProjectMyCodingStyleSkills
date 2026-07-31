@@ -225,3 +225,30 @@ unstick prod with `migrate resolve --applied|--rolled-back`.
 Prisma rows (transform first) · invent a new response shape · `console.log` · hard-code
 secrets, status strings, or error messages that should be `ERROR_CODES` · run
 `prisma db push` · ignore drift · hand-edit `_prisma_migrations`.
+
+## Role gates — three lists that must agree
+
+An endpoint's reach is described in three places, and they drift:
+
+1. the RBAC grant (`allowedPermissions` on the route),
+2. a hand-rolled role allowlist inside the controller/service,
+3. the frontend sidebar's `roles` array.
+
+Drift shows up as a 403 on a page the sidebar advertises, or a page nobody can reach. When you touch
+any of them, check all three. Prefer the RBAC grant as the single gate and delete the hand-rolled
+allowlist — a second list is a second thing to forget.
+
+For a screen that is deliberately shared with everyone, gate on the permission only and scope the
+DATA by the caller instead of refusing the request.
+
+## Guard clauses must match how the client actually calls
+
+A validation guard written from first principles will reject legitimate requests the client makes.
+Before adding one, work out what the UI sends in every state — including after a drill-down, a
+deep link, or a "back" — and make the rule exactly as strict as the data requires, no stricter.
+
+- Require a parent key only where names genuinely repeat. Rwanda's province and district names are
+  unique; sector/cell/village are not. A blanket "all ancestors required" rule 400s the country-wide
+  district frame the map opens on.
+- A filter added to satisfy a guard is a filter that changes the result set. If a value is only there
+  to prove a request is well-formed, don't apply it as a `where`.

@@ -66,6 +66,10 @@ Self-documenting code first. Good names and types carry the meaning.
 
 ## Naming & conventions
 
+- Name in **plain, common English** — specific and unambiguous (`pendingInvoices`, not
+  `data2`, `tmp`, or `procInvLst`). Avoid abbreviations, jargon, and cleverness; a name
+  should read like the thing it holds. The same plain-English rule governs any text users
+  see (see the UI skills' copy rules).
 - Files: components `PascalCase.tsx`; everything else (utils, services, hooks, routes,
   controllers) `camelCase.ts`. Hooks start with `use` (`useShippingRequests`).
 - Express controllers: handler functions end in `Handler` (`createUserHandler`),
@@ -96,6 +100,53 @@ Self-documenting code first. Good names and types carry the meaning.
   core business logic and utilities well; UI smoke-test the critical paths.
 - Secrets via env vars only — never hard-code keys/tokens. Provide `example.env`.
 
+## Scope & verification — finish the job, then prove it
+
+The two ways work comes back rejected are **narrowing the ask** and **calling it done without
+driving it**. Both are avoidable.
+
+### Read the ask for INTENT, not just the literal targets
+
+A request that names two URLs is naming examples, not a whitelist. Before building, ask *who
+performs this action and where* — then cover every one of those places.
+
+- "Add the envelope on `head-teacher/class-attendance`" means **every register screen** where
+  somebody takes attendance. A teacher takes one on their own page; if the feature can be assigned
+  *to* a teacher, the teacher's page needs it too.
+- Enumerate the surfaces before coding: which roles reach this, which routes render it, which pages
+  duplicate the same component. If a surface is deliberately out of scope, say so in the reply —
+  never leave it silently undone.
+- When two readings differ materially and you can't resolve it from the code, ask. Otherwise pick
+  the WIDER reading and state the assumption.
+
+### Test every role the change can affect
+
+Role-scoped apps break per-role, not globally. A change to a shared endpoint or a scoping rule is
+not tested until it has been exercised **as each role that reaches it**.
+
+- List the affected roles first (the permission grant, the sidebar `roles`, the backend's own
+  allowlist — they disagree more often than not), then run the surface as each one.
+- Script it when the list is long: log in per role, hit the endpoint, assert the shape. A dozen curl
+  calls in a loop find in one minute what clicking finds in an hour.
+- The role you changed the behaviour FOR is the one most likely to be broken — test it first, not
+  last.
+
+### Drive the feature, don't just load it
+
+"The page renders" is not verification. Renders, then **interacts**:
+
+- Click through every state the change introduced: open the popup, drill the map, submit the form,
+  switch the tab, page to page 2, toggle the filter, and go back.
+- Verify the numbers, not just the absence of an error. A drill that returns 0 where its parent said
+  1,079 is a passing request and a broken feature.
+- Check both the empty case and a case with real data — an empty dataset hides most bugs.
+- Read the network log and the console, not only the screenshot.
+
+### Then say plainly what you did and did NOT verify
+
+Report the surfaces exercised and the ones left untested, with the reason. "Verified" must mean
+driven; if it only compiled, say that instead.
+
 ## Do / Don't
 
 **Do**
@@ -103,8 +154,11 @@ Self-documenting code first. Good names and types carry the meaning.
 - Keep functions small and single-purpose; return early to avoid nesting.
 - Type the boundaries; thread types through.
 - Co-locate by feature where the stack supports it.
+- Name things — and write any user-facing text — in plain, specific, common English.
 
 **Don't**
+- Narrow a request to the literal URLs/files it named while leaving the same feature broken next door.
+- Report work as done or verified when it was only compiled, or only exercised as one role.
 - Copy-paste a block a second time instead of extracting it.
 - Sprinkle `any`, `// @ts-ignore`, or `eslint-disable` to silence the compiler.
 - Hard-code values that recur (IDs, URLs, colours, status strings).

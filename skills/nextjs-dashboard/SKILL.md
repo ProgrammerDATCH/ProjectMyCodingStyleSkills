@@ -113,6 +113,18 @@ export async function GET() {
 - Mark interactive components `'use client'`; keep server components for data/layout where
   possible. Standard pieces: `GlobalFilter`, skeletons, `ErrorDisplay`, `QueryProvider`.
 
+### Copy & content — few words, plain English
+
+- **Few words win.** Users skim; they hate walls of text. Keep labels, buttons, headings,
+  and helper text short — cut every word that isn't doing a job. One tight line beats a
+  paragraph, and most paragraphs shouldn't be on screen at all.
+- **Plain, common English.** Write the way users talk — no jargon or internal terms.
+  "Save" not "Persist", "Not paid" not "Outstanding remittance".
+- **Be specific.** A label or message says exactly what it means: "Add invoice" not
+  "Submit", "3 overdue" not "Some items need attention".
+- **Summarise by default.** Lead with the headline number/status; tuck detail behind a
+  click (tooltip, expandable row, drawer, "View details"). Don't dump full text up front.
+
 ### Inputs & controls — prefer a (searchable) select
 
 - When the value comes from a **known set of options**, use a **select** — even when there
@@ -173,10 +185,30 @@ in `providers.tsx`, gate pages/handlers by session, redirect unauthorised users 
 **Do** call external APIs from route handlers · extract integration helpers to `lib/` ·
 type hook responses and export the types · reuse `shared` components, skeletons, and
 `ErrorDisplay` · keep IDs/keys in constants/env · use a searchable select (Combobox) for
-known option sets · design mobile-first · keep type large and scale it up on big screens.
+known option sets · design mobile-first · keep type large and scale it up on big screens ·
+keep UI copy short, specific, and plain · summarise first and reveal detail on demand.
 
 **Don't** fetch third-party APIs (with keys) from the client · copy a component into a
 second page instead of moving it to `shared` · hard-code Airtable/Xero IDs or hex colours
 inline · hand-roll loading/error UI per page · drop `any` on payloads without shaping them ·
 use a text input where a select fits · ship a non-searchable dropdown · start desktop-first
-or leave body text tiny on large screens.
+or leave body text tiny on large screens · crowd the UI with long text, jargon, or vague labels.
+
+## Role-scoped dashboards — find every surface before you build
+
+These apps render the same feature from several routes (`[role]` segments, per-role static pages,
+and components shared by both). Adding a control to one page is rarely the whole job.
+
+- `grep` for the component and the route before coding; a feature belongs wherever its action is
+  performed, not only on the page named in the ticket.
+- Verify as each role that reaches it. The sidebar's `roles` array, the RBAC permission and the API's
+  own allowlist frequently disagree — a link that 403s is a bug even though the code "works".
+- Drive the change after it renders: open the dialog, drill the map, submit, page, toggle, go back.
+  First paint hides nearly every real defect.
+
+## Portalled UI inside a dialog
+
+Radix `Select`, `Popover`, `Combobox` and `Tooltip` render in a portal at the end of `<body>`, so a
+dialog with a raised `z-index` paints OVER them and the menu appears behind the dialog. When a dialog
+sets its own stacking context, give the portalled content a higher `z-index` than the dialog — and
+check it visually, since nothing warns you.
