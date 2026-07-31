@@ -55,6 +55,10 @@ All styling goes through `app/ui/theme.py`. Read `docs/style-guide.md` before an
 - Inject global CSS **once** via `theme.inject_global_css()` (wired in `main.py`); no
   page-level `<style>` blocks.
 - Reserve `type="primary"` buttons for the single principal action in a context.
+- **Few words, plain English, summarise first.** Users skim — keep labels, headers, and
+  captions short and specific in common English (no jargon). Lead with the headline
+  metric/status via `theme.metric_strip`/`status_badge`; push detail into expanders,
+  tooltips, or a drilldown rather than long text on the page.
 
 ## Code conventions
 
@@ -82,8 +86,8 @@ repo's `.claude` Stop hook auto-commits each turn, don't manually `git commit` u
 
 **Do** keep views thin and engine testable · route styling through `theme.py` · pin
 dependency versions · type signatures · seed pytest fixtures by hand · centralise SQL in
-`db/`.
+`db/` · keep UI copy short, specific, and plain · summarise first and reveal detail on demand.
 
 **Don't** hard-code hex colours or inline `<style>` in `app/ui/` · open raw DB connections
 when a `db/` helper exists · call third-party APIs outside `connectors/` · loop over rows
-when pandas can vectorise · commit secrets.
+when pandas can vectorise · commit secrets · crowd the UI with long text, jargon, or vague labels.

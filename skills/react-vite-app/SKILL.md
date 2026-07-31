@@ -121,6 +121,18 @@ Same as the Next stack: build from `components/ui` shadcn primitives, Tailwind v
 utilities + `cn()`, lucide-react icons, recharts, framer-motion for motion. Centralise
 theme tokens; no inline style theming or hex literals in components.
 
+### Copy & content — few words, plain English
+
+- **Few words win.** Users skim; they hate walls of text. Keep labels, buttons, headings,
+  and helper text short — cut every word that isn't doing a job. One tight line beats a
+  paragraph, and most paragraphs shouldn't be on screen at all.
+- **Plain, common English.** Write the way users talk — no jargon or internal terms.
+  "Save" not "Persist", "Not paid" not "Outstanding remittance".
+- **Be specific.** A label or message says exactly what it means: "Add invoice" not
+  "Submit", "3 overdue" not "Some items need attention".
+- **Summarise by default.** Lead with the headline number/status; tuck detail behind a
+  click (tooltip, expandable row, drawer, "View details"). Don't dump full text up front.
+
 ### Inputs & controls — prefer a (searchable) select
 
 - When the value comes from a **known set of options**, use a **select** — even for just a
@@ -175,10 +187,11 @@ comes from env / `api-base-url.ts` — never hard-code it.
 **Do** route every request through `globalFetch` + `assertApiOk` · wrap endpoints in typed
 services · organise new domains as feature folders · validate forms with zod · toast with
 sonner · invalidate queries after mutations · use a searchable select (Combobox) for known
-option sets · design mobile-first · keep type large and scale it up on big screens.
+option sets · design mobile-first · keep type large and scale it up on big screens · keep UI
+copy short, specific, and plain · summarise first and reveal detail on demand.
 
 **Don't** call `fetch`/`axios` directly from a component · throw away the envelope (use
 `assertApiOk` so mutations reject) · hard-code the API base URL · duplicate a service across
 features · scatter loose `useState` where TanStack Query/Context belongs · use a text input
 where a select fits · ship a non-searchable dropdown · start desktop-first or leave body
-text tiny on large screens.
+text tiny on large screens · crowd the UI with long text, jargon, or vague labels.
