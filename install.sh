@@ -19,7 +19,7 @@ set -euo pipefail
 REPO_SLUG="ProgrammerDATCH/Akokuntaro-Coding-Skills"
 BRANCH="${SKILLS_BRANCH:-develop}"
 SRC_DIR="${SKILLS_SRC_DIR:-$HOME/.local/share/coding-style-skills}"
-SKILLS="coding-principles nextjs-dashboard express-prisma-api react-vite-app python-app"
+SKILLS="coding-principles ui-review nextjs-dashboard express-prisma-api react-vite-app python-app"
 
 info() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 ok()   { printf '\033[1;32m  +\033[0m %s\n' "$*"; }

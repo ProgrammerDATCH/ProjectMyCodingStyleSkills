@@ -38,6 +38,12 @@ David prefers reusable code. **Design for reuse from the start**, not after the 
   (URLs, table/field IDs, status strings, colours). Put them in `constants.ts` / config.
 - **Don't** over-engineer for imaginary futures. Reuse means "factor what genuinely
   recurs or is clearly cross-cutting," not "add config knobs nobody asked for."
+- **A referenced design means THE component.** "Like the teacher dashboard's envelope" =
+  grep for that component and import it, never a lookalike built in the same spirit. One
+  canonical implementation per pattern.
+- **Rebuilds prune.** Porting or rewriting a page is the moment to DELETE controls that
+  duplicate another control's job (a filter panel beside a drill bar, a second date picker).
+  Carrying legacy redundancy forward just schedules the follow-up task where David removes it.
 
 ## TypeScript rigor — strict but pragmatic
 
@@ -118,6 +124,13 @@ performs this action and where* — then cover every one of those places.
   never leave it silently undone.
 - When two readings differ materially and you can't resolve it from the code, ask. Otherwise pick
   the WIDER reading and state the assumption.
+- **A named instance means the category.** "Remove this description on phone" means every
+  descriptive line on that page, not the one sentence quoted. Before finishing, sweep for
+  siblings of whatever was named — other text of the same kind, other tiers/roles, the sibling
+  app when the codebase has a fork — and state the scope covered.
+- **Sibling apps converge.** When two apps share a design (a fork), apply the change to both by
+  default. If David orders a deliberate divergence, implement it but flag it as a likely
+  convergence candidate — ordered divergences have historically been revoked within a day.
 
 ### Test every role the change can affect
 
@@ -142,6 +155,27 @@ not tested until it has been exercised **as each role that reaches it**.
 - Check both the empty case and a case with real data — an empty dataset hides most bugs.
 - Read the network log and the console, not only the screenshot.
 
+### Numbers must reconcile
+
+David audits arithmetic. Any figure you touch must re-add: parts sum to the total
+(present + absent + unmarked = registered), percentages derive from the numbers beside them,
+and paired visuals are OPTICALLY equal (ink size), not box-equal.
+
+- If existing logic silently merges or hides a category (unmarked folded into present), surface
+  it in the same turn as a flagged question — even when it is documented and you didn't write it.
+  Preserving it just defers the correction to him.
+- Say in the report that the totals reconcile; he will check.
+
+### Done means discoverable
+
+A capability is not finished when its page works at a deep link — it is finished when the
+target role can NAVIGATE to it.
+
+- Wire the sidebar / menu entry for every role that gains the feature, then verify by logging in
+  as that role and reaching it through the UI, not by typing the URL.
+- Sidebar visibility has its own gates (role filters, module narrowing, pinned sets) that pass
+  API-level testing untouched — the entry point is part of the feature.
+
 ### Then say plainly what you did and did NOT verify
 
 Report the surfaces exercised and the ones left untested, with the reason. "Verified" must mean
@@ -158,6 +192,10 @@ driven; if it only compiled, say that instead.
 
 **Don't**
 - Narrow a request to the literal URLs/files it named while leaving the same feature broken next door.
+- Treat a named example as the whole ask — sweep the category (all similar text, tiers, sibling app).
+- Build a lookalike of a referenced component instead of importing the component itself.
+- Port a page forward with its duplicated legacy controls intact.
+- Ship a feature whose target role has no navigation entry to reach it.
 - Report work as done or verified when it was only compiled, or only exercised as one role.
 - Copy-paste a block a second time instead of extracting it.
 - Sprinkle `any`, `// @ts-ignore`, or `eslint-disable` to silence the compiler.

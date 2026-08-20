@@ -9,6 +9,7 @@ do/don't rules — so every session follows the same style.
 | Skill | When Claude uses it |
 | --- | --- |
 | **coding-principles** | Every coding task — reuse/DRY bias, naming, TypeScript rigor, minimal comments, error handling, do/don't. The base layer. |
+| **ui-review** | Every frontend/UI task, before calling it done — the phone-compact rules (secondary elements shrink to captions, prose hidden on phones, only tables scroll), one-control-per-job pruning, optical equality, and the finishing checklist. |
 | **nextjs-dashboard** | New frontends / full-stack dashboards — Next.js 15 App Router, React 19, Tailwind v4, shadcn/ui, TanStack Query, next-auth. *Default frontend.* |
 | **express-prisma-api** | Standalone backend APIs — Express + TypeScript + Prisma/MySQL, layered controllers/services, `ApiError`/`ERROR_CODES`, Joi, JWT. *Default backend.* |
 | **react-vite-app** | SPA frontends talking to a separate API — Vite + React 18, react-router, `globalFetch`/`assertApiOk`, react-hook-form + zod, sonner. |

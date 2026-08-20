@@ -19,7 +19,7 @@ $ErrorActionPreference = 'Stop'
 $RepoSlug = 'ProgrammerDATCH/Akokuntaro-Coding-Skills'
 $Branch   = if ($env:SKILLS_BRANCH)  { $env:SKILLS_BRANCH }  else { 'develop' }
 $SrcDir   = if ($env:SKILLS_SRC_DIR) { $env:SKILLS_SRC_DIR } else { Join-Path $env:LOCALAPPDATA 'coding-style-skills' }
-$Skills   = @('coding-principles','nextjs-dashboard','express-prisma-api','react-vite-app','python-app')
+$Skills   = @('coding-principles', 'ui-review','nextjs-dashboard','express-prisma-api','react-vite-app','python-app')
 
 function Info($m) { Write-Host "==> $m" -ForegroundColor Blue }
 function Ok($m)   { Write-Host "  + $m" -ForegroundColor Green }
